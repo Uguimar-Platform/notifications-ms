@@ -1,0 +1,22 @@
+package com.uguimar.notificationsms.application.service;
+
+import com.uguimar.notificationsms.application.port.input.SendVerificationEmailUseCase;
+import com.uguimar.notificationsms.application.port.output.EmailSender;
+import com.uguimar.notificationsms.domain.model.Email;
+import reactor.core.publisher.Mono;
+
+public class SendVerificationEmailService implements SendVerificationEmailUseCase {
+    private final EmailSender emailSender;
+
+    public SendVerificationEmailService(EmailSender emailSender) {
+        this.emailSender = emailSender;
+    }
+
+    @Override
+        public Mono<Void> send(String toEmail, String code) {
+        String subject = "Código de verificación";
+        String content = "Tu código de verificación es: " + code;
+        Email email = new Email(toEmail, subject, content);
+        return emailSender.sendEmail(email);
+    }
+}
