@@ -15,8 +15,8 @@ public class SendVerificationEmailService implements SendVerificationEmailUseCas
     @Override
         public Mono<Void> send(String toEmail, String code) {
         String subject = "Código de verificación";
-        String content = "Tu código de verificación es: " + code;
-        Email email = new Email(toEmail, subject, content);
+        String body = "Tu código de verificación es: " + code;
+        Email email = new Email(toEmail, subject, body);
         return emailSender.sendEmail(email);
     }
 }
