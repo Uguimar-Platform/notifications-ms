@@ -1,0 +1,13 @@
+#Perfiles para probar el envio de correos con SendGrid
+spring:
+  profiles: test
+sendgrid:
+  api-key: ${SENDGRID_API_KEY_TEST}
+
+---
+spring:
+  profiles: prod
+sendgrid:
+  api-key: ${SENDGRID_API_KEY_PROD}
+
+  
