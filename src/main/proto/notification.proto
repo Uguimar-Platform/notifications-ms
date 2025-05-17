@@ -1,0 +1,24 @@
+//Version del lenguaje de proto
+syntax = "proto3";
+
+//Configuracion de los paquetes
+option java_multiple_files = true;
+option java_package = "com.uguimar.notificationsms.grpc";
+option java_outer_classname = "NotificationProto";
+
+
+//Creación del Servicio
+service NotificationService {
+    rpc SendNotificationEmail ( SendNotificationEmailRequest ) returns ( SendNotificationEmailResponse );
+}
+
+//Definición del mensaje de solicitud
+message SendNotificationEmailRequest {
+    string email = 1;
+    string code = 2;
+}
+
+//Definición del mensaje de respuesta
+message SendNotificationEmailResponse {
+    bool success = 1;
+}

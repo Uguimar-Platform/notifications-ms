@@ -1,10 +1,13 @@
 package com.uguimar.notificationsms.application.service;
 
+import org.springframework.stereotype.Service;
+
 import com.uguimar.notificationsms.application.port.input.SendVerificationEmailUseCase;
 import com.uguimar.notificationsms.application.port.output.EmailSender;
 import com.uguimar.notificationsms.domain.model.Email;
 import reactor.core.publisher.Mono;
 
+@Service //Para el gRPC service
 public class SendVerificationEmailService implements SendVerificationEmailUseCase {
     private final EmailSender emailSender;
 
