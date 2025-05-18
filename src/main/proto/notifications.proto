@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.uguimar.notificationsms.infrastructure.grpc";
+option java_outer_classname = "NotificationsProto";
+
+service NotificationService {
+  rpc SendPasswordResetEmail (PasswordResetRequest) returns (PasswordResetResponse);
+}
+
+message PasswordResetRequest {
+  string email = 1;
+  string code = 2;
+
+}
+
+message PasswordResetResponse {
+  string message = 1;
+  string status = 2;
+}
