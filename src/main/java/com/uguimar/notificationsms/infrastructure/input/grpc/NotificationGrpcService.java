@@ -1,25 +1,15 @@
-package com.uguimar.notificationsms.grpc;
+package com.uguimar.notificationsms.infrastructure.input.grpc;
 
-
-//Si no te jala los paquetes por default puede ser un error de IDE
-//Añadir las siguientes rutas en el Java Runtime
-/*
-target\generated-sources\protobuf\grpc-java
-target\generated-sources\protobuf\java
- */
-
-//Los dejo por si les llega a jalar, pero para mi no ya que puse los path en el Java Runtime
-
-import com.uguimar.notificationsms.application.port.input.SendVerificationEmailUseCase;
-import com.uguimar.notificationsms.grpc.NotificationServiceGrpc;
-import com.uguimar.notificationsms.grpc.SendNotificationEmailRequest;
-import com.uguimar.notificationsms.grpc.SendNotificationEmailResponse;
 
 import io.grpc.stub.StreamObserver;
 import reactor.core.publisher.Mono;
 
 import org.springframework.grpc.server.service.GrpcService;
 
+import com.uguimar.notificationsms.application.port.input.SendVerificationEmailUseCase;
+import com.uguimar.notificationsms.grpc.NotificationServiceGrpc;
+import com.uguimar.notificationsms.grpc.SendNotificationEmailRequest;
+import com.uguimar.notificationsms.grpc.SendNotificationEmailResponse;
 @GrpcService //Notacion para el servivio gRPC
 public class NotificationGrpcService extends NotificationServiceGrpc.NotificationServiceImplBase {
 

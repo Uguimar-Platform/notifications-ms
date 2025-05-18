@@ -18,7 +18,7 @@ public class TestJavaEmailControler {
         Email email = new Email(
             "Example@correo.com", 
             "cafeeeeeeeeeeeeeeeeee", 
-            "¡Este es un correo de prueba!"
+            "¡Este es un  de prueba!"
         );
         return emailSender.sendEmail(email)
             .thenReturn("Correo enviado con éxito");
