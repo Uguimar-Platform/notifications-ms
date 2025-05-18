@@ -1,0 +1,16 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587  # Puerto correcto para TLS
+    username: aburgame@ucvvirtual.edu.pe
+    password: "lsap nril mmgu asbn"
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true  # Habilita STARTTLS
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000

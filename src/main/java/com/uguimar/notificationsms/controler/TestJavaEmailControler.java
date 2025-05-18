@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 //Controlador REST para enviar correos de prueba
 @RestController
 @RequestMapping("/test-email")
-public class TestEmailControler {
+public class TestJavaEmailControler {
     
     @Autowired
     private EmailSender emailSender;  //// Servicio para enviar correos 
@@ -17,11 +17,16 @@ public class TestEmailControler {
     public Mono<String> sendTestEmail() {
         Email email = new Email(
             "Example@correo.com", 
-            "Prueba usando SendGrid", 
-            "¡Este es un correo de prueba LO LOGRASTE CHAVAL!"
+            "cafeeeeeeeeeeeeeeeeee", 
+            "¡Este es un correo de prueba!"
         );
         return emailSender.sendEmail(email)
             .thenReturn("Correo enviado con éxito");
+    }
+
+    @GetMapping("/check")
+    public String check() {
+        return " Servicio REST activo (puerto 8080) | gRPC en 9090";
     }
 
 }
