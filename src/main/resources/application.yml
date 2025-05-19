@@ -6,13 +6,20 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:tarrillollontopvictormanuel04@gmail.com}
-    password: ${MAIL_PASSWORD:kppuphzpviyknkeo}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: ${MAIL_AUTH:true}
           starttls:
             enable: ${MAIL_STARTTLS:true}
+grpc:
+  server:
+    port: 9090
+    enabled: true
+
+server:
+  port: 8082

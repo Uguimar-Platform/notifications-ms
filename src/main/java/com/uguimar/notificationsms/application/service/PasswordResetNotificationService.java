@@ -5,6 +5,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -27,182 +28,158 @@ public class PasswordResetNotificationService implements PasswordResetNotificati
     }
 
     @Override
-    public Mono<String> sendPasswordResetEmail(String emailReceptor, String code) {
-        log.info("Enviando correo de restablecimiento de contraseña a: {}", emailReceptor);
-        String htmlBody = generatePasswordResetEmailContent(emailReceptor, code);
+    public Mono<String> sendPasswordResetEmail(String emailReceptor,String username, String code) {
+        String htmlBody = generatePasswordResetEmailContent(emailReceptor, username, code);
 
         return Mono.fromCallable(() -> {
             try {
                 MimeMessage message = mailsender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-                helper.setFrom(new InternetAddress(userIssuing != null ? userIssuing : "noreply@uguimar.com"));
+                helper.setFrom(new InternetAddress(userIssuing));
                 helper.setTo(new InternetAddress(emailReceptor));
-                helper.setSubject("Restablecimiento de contraseña - UGUIMAR");
+                helper.setSubject("Tu contraseña de UGuimar");
                 helper.setText(htmlBody, true);
-
+                ClassPathResource logo = new ClassPathResource("img/logo.png");
+                helper.addInline("logo-uguimar", logo, "img/png");
                 mailsender.send(message);
-                log.info("Correo de restablecimiento de contraseña enviado exitosamente a: {}", emailReceptor);
                 return "Correo enviado exitosamente a " + emailReceptor;
+
             } catch (Exception e) {
-                log.error("Error al enviar correo de restablecimiento de contraseña a {}: {}", emailReceptor, e.getMessage());
                 throw new RuntimeException("Error al enviar correo electrónico", e);
             }
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private String generatePasswordResetEmailContent(String email, String code) {
+    private String generatePasswordResetEmailContent(String email, String username, String code) {
         String currentYear = String.valueOf(LocalDateTime.now().getYear());
         String formattedDate = LocalDateTime.now().plusMinutes(30)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
-        return "<!DOCTYPE html>\n" +
-                "<html lang=\"es\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-                "    <title>Restablecimiento de contraseña</title>\n" +
-                "    <style>\n" +
-                "        /* Estilos para todos los clientes de correo */\n" +
-                "        @media only screen and (max-width: 620px) {\n" +
-                "            .email-container {\n" +
-                "                width: 100% !important;\n" +
-                "                padding: 10px !important;\n" +
-                "            }\n" +
-                "            .code-container {\n" +
-                "                width: 90% !important;\n" +
-                "                padding: 12px 8px !important;\n" +
-                "            }\n" +
-                "            .content {\n" +
-                "                padding: 20px 15px !important;\n" +
-                "            }\n" +
-                "            h1 {\n" +
-                "                font-size: 20px !important;\n" +
-                "            }\n" +
-                "            p {\n" +
-                "                font-size: 14px !important;\n" +
-                "            }\n" +
-                "        }\n" +
-                "        /* Estilos base */\n" +
-                "        body {\n" +
-                "            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;\n" +
-                "            margin: 0;\n" +
-                "            padding: 0;\n" +
-                "            background-color: #f9f9f9;\n" +
-                "            color: #333333;\n" +
-                "            line-height: 1.5;\n" +
-                "        }\n" +
-                "        .email-container {\n" +
-                "            max-width: 600px;\n" +
-                "            margin: 0 auto;\n" +
-                "            background-color: #ffffff;\n" +
-                "            border-radius: 8px;\n" +
-                "            overflow: hidden;\n" +
-                "            box-shadow: 0 1px 3px rgba(0,0,0,0.1);\n" +
-                "        }\n" +
-                "        .header {\n" +
-                "            background-color: #1a5276;\n" +
-                "            color: #ffffff;\n" +
-                "            padding: 25px 20px;\n" +
-                "            text-align: center;\n" +
-                "            border-bottom: 1px solid #0f3b55;\n" +
-                "        }\n" +
-                "        .header-title {\n" +
-                "            margin: 0;\n" +
-                "            font-size: 24px;\n" +
-                "            font-weight: 700;\n" +
-                "            text-transform: uppercase;\n" +
-                "            letter-spacing: 1px;\n" +
-                "        }\n" +
-                "        .content {\n" +
-                "            padding: 35px 25px;\n" +
-                "            text-align: center;\n" +
-                "        }\n" +
-                "        h1 {\n" +
-                "            color: #1a5276;\n" +
-                "            margin-top: 0;\n" +
-                "            margin-bottom: 20px;\n" +
-                "            font-weight: 600;\n" +
-                "        }\n" +
-                "        p {\n" +
-                "            margin: 0 0 20px;\n" +
-                "            font-size: 16px;\n" +
-                "            color: #555555;\n" +
-                "        }\n" +
-                "        .highlight {\n" +
-                "            color: #1a5276;\n" +
-                "            font-weight: 600;\n" +
-                "        }\n" +
-                "        .code-container {\n" +
-                "            background-color: #f5f8fa;\n" +
-                "            border: 1px solid #e1e4e8;\n" +
-                "            border-radius: 6px;\n" +
-                "            padding: 20px;\n" +
-                "            margin: 25px auto;\n" +
-                "            width: 70%;\n" +
-                "            text-align: center;\n" +
-                "            box-shadow: 0 2px 4px rgba(0,0,0,0.05);\n" +
-                "        }\n" +
-                "        .code {\n" +
-                "            font-size: 32px;\n" +
-                "            font-weight: 700;\n" +
-                "            color: #1a5276;\n" +
-                "            letter-spacing: 6px;\n" +
-                "            font-family: 'Courier New', monospace;\n" +
-                "            user-select: all;\n" +
-                "        }\n" +
-                "        .expiration {\n" +
-                "            margin-top: 20px;\n" +
-                "            color: #e67e22;\n" +
-                "            font-size: 14px;\n" +
-                "            font-weight: 500;\n" +
-                "            padding: 8px 12px;\n" +
-                "            background-color: #fff9e6;\n" +
-                "            border-radius: 4px;\n" +
-                "            display: inline-block;\n" +
-                "        }\n" +
-                "        .divider {\n" +
-                "            height: 1px;\n" +
-                "            background-color: #e1e4e8;\n" +
-                "            margin: 25px 0;\n" +
-                "        }\n" +
-                "        .footer {\n" +
-                "            background-color: #f5f8fa;\n" +
-                "            padding: 20px;\n" +
-                "            text-align: center;\n" +
-                "            font-size: 13px;\n" +
-                "            color: #6c757d;\n" +
-                "            border-top: 1px solid #e1e4e8;\n" +
-                "        }\n" +
-                "        .security-notice {\n" +
-                "            font-style: italic;\n" +
-                "            margin-top: 15px;\n" +
-                "            font-size: 12px;\n" +
-                "        }\n" +
-                "    </style>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "    <div class=\"email-container\">\n" +
-                "        <div class=\"header\">\n" +
-                "            <div class=\"header-title\">UGUIMAR</div>\n" +
-                "        </div>\n" +
-                "        <div class=\"content\">\n" +
-                "            <h1>Restablecimiento de Contraseña</h1>\n" +
-                "            <p>Hemos recibido una solicitud para restablecer la contraseña de la cuenta asociada con <span class=\"highlight\">" + email + "</span>.</p>\n" +
-                "            <p>Utiliza el siguiente código para completar el proceso:</p>\n" +
-                "            <div class=\"code-container\">\n" +
-                "                <div class=\"code\">" + code + "</div>\n" +
-                "            </div>\n" +
-                "            <div class=\"expiration\">Este código expirará el " + formattedDate + "</div>\n" +
-                "            <div class=\"divider\"></div>\n" +
-                "            <p>Si no has solicitado restablecer tu contraseña, puedes ignorar este correo electrónico o contactar a nuestro soporte si crees que tu cuenta podría estar comprometida.</p>\n" +
-                "            <p class=\"security-notice\">Por razones de seguridad, nunca compartimos tus credenciales ni te pedimos información personal por correo electrónico.</p>\n" +
-                "        </div>\n" +
-                "        <div class=\"footer\">\n" +
-                "            <p>Este es un correo electrónico automático. Por favor, no responda a este mensaje.</p>\n" +
-                "            <p>&copy; " + currentYear + " UGUIMAR. Todos los derechos reservados.</p>\n" +
-                "        </div>\n" +
-                "    </div>\n" +
-                "</body>\n" +
-                "</html>";
-    }
-}
+
+        return """
+                <!DOCTYPE html>
+                                      <html lang="es">
+                                        <head>
+                                          <meta charset="UTF-8" />
+                                          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                                          <title>Restablecimiento de contraseña</title>
+                                          <style>
+                                            body {
+                                              margin: 0;
+                                              padding: 0;
+                                              background-color: #f9fcff;
+                                              font-family: "Segoe UI", sans-serif;
+                                            }
+                                            .email-wrapper {
+                                              max-width: 600px;
+                                              margin: 0 auto;
+                                              background: #ffffff;
+                                              border-radius: 12px;
+                                              overflow: hidden;
+                                              box-shadow: 0 4px 12px rgba(8, 31, 92, 0.1);
+                                              border: 1px solid #e7e7e7;
+                                            }
+                                            .header {
+                                              background-color: #ffffff;
+                                              color: white;
+                                              text-align: center;
+                                            }
+                
+                                            .body {
+                                              text-align: center;
+                                              color: #081f5c;
+                                            }
+                                            .body h2 {
+                                              font-size: 22px;
+                                              color: #334eac;
+                                            }
+                                            .body p {
+                                              font-size: 15px;
+                                              line-height: 1.6;
+                                              margin: 12px 0;
+                                            }
+                                            .code-box {
+                                              background: #d0e3ff;
+                                              border: 1px dashed #7096d1;
+                                              border-radius: 6px;
+                                              padding: 16px;
+                                              margin: 24px auto;
+                                              display: inline-block;
+                                            }
+                                            .code-box span {
+                                              font-family: "Courier New", monospace;
+                                              font-size: 28px;
+                                              font-weight: bold;
+                                              color: #081f5c;
+                                              letter-spacing: 6px;
+                                              user-select: all;
+                                            }
+                                            .footer {
+                                              font-size: 13px;
+                                              text-align: center;
+                                              color: #666;
+                                              padding: 20px;
+                                              background: #e7f1ff;
+                                            }
+                                            .security-note {
+                                              font-style: italic;
+                                              font-size: 12px;
+                                              color: #7096d1;
+                                              margin-top: 16px;
+                                            }
+                
+                                            .img-logo {
+                                              border-bottom: #081e5c81 2px solid;
+                                            }
+                
+                                            @media only screen and (max-width: 620px) {
+                                              .body {
+                                                padding: 24px 16px;
+                                              }
+                                              .code-box span {
+                                                font-size: 22px;
+                                              }
+                                            }
+                                          </style>
+                                        </head>
+                                        <body>
+                                          <div class="email-wrapper">
+                                            <div class="header">
+                                              <img
+                                                class="img-logo"
+                                                src="cid:logo-uguimar"
+                                                alt="Logo UGuimar"
+                                                width="150"
+                                              />
+                                            </div>
+                                            <div class="body">
+                                              <h2>Hola, %s</h2>
+                                              <p>
+                                                Recibimos una solicitud para restablecer tu contraseña asociada con
+                                                <strong>%s</strong>.
+                                              </p>
+                                              <p>Ingresa el siguiente código para completar el proceso:</p>
+                                              <div class="code-box">
+                                                <span>%s</span>
+                                              </div>
+                                              <p>
+                                                Si no solicitaste este restablecimiento, ignora este correo o contacta
+                                                soporte.
+                                              </p>
+                                              <p class="security-note">
+                                                Nunca compartiremos tus credenciales ni pediremos información personal
+                                                por este medio.
+                                              </p>
+                                            </div>
+                                            <div class="footer">
+                                              Este mensaje fue generado automáticamente.<br />
+                                              &copy; %s UGUIMAR. Todos los derechos reservados.
+                                            </div>
+                                          </div>
+                                        </body>
+                                      </html>
+                """.formatted(username, email, code, currentYear);
+
+                    }
+
+                }
