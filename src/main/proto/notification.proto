@@ -15,7 +15,8 @@ service NotificationService {
 //Definición del mensaje de solicitud
 message SendNotificationEmailRequest {
     string email = 1;
-    string code = 2;
+    string subject = 2;
+    string code = 3;
 }
 
 //Definición del mensaje de respuesta

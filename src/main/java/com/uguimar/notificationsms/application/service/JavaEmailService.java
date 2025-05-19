@@ -52,8 +52,8 @@ import jakarta.mail.internet.MimeMessage;
         if (email.getSubject() == null || email.getSubject().isBlank()) {
             throw new IllegalArgumentException("Email subject cannot be empty");
         }
-        if (email.getBody() == null) {
-            throw new IllegalArgumentException("Email body cannot be null");
+        if (email.getCode() == null) {
+            throw new IllegalArgumentException("Email code cannot be null");
         }
     }
 
@@ -66,7 +66,7 @@ import jakarta.mail.internet.MimeMessage;
         helper.setFrom(fromEmail);
         helper.setTo(email.getTo());
         helper.setSubject(email.getSubject());
-        helper.setText(email.getBody(), false); // false indica texto plano
+        helper.setText(buildHtmlContent(email.getCode()), true); // false indica texto plano
         
         mailSender.send(message);
         logger.info("Email successfully sent to {}", email.getTo());
@@ -77,5 +77,31 @@ import jakarta.mail.internet.MimeMessage;
                                           email.getTo(), e.getMessage());
         logger.error(errorMessage, e);
         throw new EmailSendingException(errorMessage, e);
+    }
+
+    private String buildHtmlContent(String code) {
+        return """
+        <html>
+            <body style="font-family: 'Segoe UI', sans-serif; background-color: #f7f9fb; padding: 30px;">
+                <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.05);">
+                    <h2 style="color: #1a73e8;">¡Tu código de verificación ha llegado!</h2>
+                    <p style="font-size: 16px; color: #333;">Hola,</p>
+                    <p style="font-size: 16px; color: #333;">Hemos recibido una solicitud para verificar tu identidad. Utiliza el siguiente código:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <span style="display: inline-block; font-size: 30px; font-weight: bold; color: #1a73e8; background-color: #e8f0fe; padding: 15px 30px; border-radius: 8px; letter-spacing: 3px;">
+                            %s
+                        </span>
+                    </div>
+
+                    <p style="font-size: 14px; color: #666;">Este código expirará en los próximos minutos. Si no solicitaste este código, por favor ignora este mensaje.</p>
+
+                    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+                    <p style="font-size: 14px; color: #999;">Este correo fue enviado automáticamente. No respondas a este mensaje.</p>
+                    <p style="font-size: 14px; color: #999;">© 2025 Uguimar Platform</p>
+                </div>
+            </body>
+        </html>
+    """.formatted(code);
     }
 }

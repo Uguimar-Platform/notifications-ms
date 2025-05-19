@@ -3,12 +3,12 @@ package com.uguimar.notificationsms.domain.model;
 public class Email {
     private String to;
     private String subject;
-    private String body;
+    private String code;
 
-    public Email(String to, String subject, String body) {
+    public Email(String to, String subject, String code) {
         this.to = to;
         this.subject = subject;
-        this.body = body;
+        this.code = code;
     }
 
     public Email(){
@@ -30,11 +30,11 @@ public class Email {
         this.subject = subject;
     }
 
-    public String getBody() {
-        return body;
+    public String getCode() {
+        return code;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setCode(String code) {
+        this.code = code;
     }
 }
