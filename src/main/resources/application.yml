@@ -16,10 +16,4 @@ spring:
           auth: ${MAIL_AUTH:true}
           starttls:
             enable: ${MAIL_STARTTLS:true}
-grpc:
-  server:
-    port: 9090
-    enabled: true
-
-server:
-  port: 8082
+spring.grpc.server.port: 9092
