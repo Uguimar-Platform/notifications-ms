@@ -5,3 +5,15 @@ spring:
     name: notifications-ms
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:true}
+          starttls:
+            enable: ${MAIL_STARTTLS:true}
+spring.grpc.server.port: 9092
