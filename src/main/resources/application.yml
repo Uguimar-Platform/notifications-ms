@@ -5,3 +5,12 @@ spring:
     name: notifications-ms
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+
+
+#Puertos para el servidor web y gRPC
+server:
+  port: 8080
+
+grpc:
+  server:
+    port: 9090
