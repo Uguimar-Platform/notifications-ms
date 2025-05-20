@@ -2,8 +2,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587  # Puerto correcto para TLS
-    username: example@correo.com #Elcorreo
-    password: "Contraseña de Aplicacion" # La contraseña debe ser ingresada en texto plano
+    username: ${SMTP_USERNAME} #Correo del remitente maestro (Persona/Empresa que envia los correos) Remitente
+    password: ${SMTP_PASSWORD} # La contraseña debe ser ingresada (genera una por contraseña de aplicaciones en google)
     protocol: smtp
     properties:
       mail:
@@ -13,4 +13,3 @@ spring:
             enable: true  # Habilita STARTTLS
           connectiontimeout: 5000
           timeout: 5000
-          writetimeout: 5000
