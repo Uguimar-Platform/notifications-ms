@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Bienvenido a Uguimar!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .button {
+            background-color: #4a6ee0;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>¡Bienvenido a Uguimar!</h1>
+    <p>Hola <span th:text="${username}">Usuario</span>,</p>
+
+    <p>Tu cuenta ha sido verificada correctamente. Ahora puedes comenzar a disfrutar de todos los beneficios de nuestra
+        plataforma.</p>
+
+    <p>¿Qué puedes hacer ahora?</p>
+    <ul>
+        <li>Explorar cursos disponibles</li>
+        <li>Personalizar tu perfil</li>
+        <li>Conectar con otros estudiantes</li>
+    </ul>
+
+    <p>
+        <a href="https://uguimar.com/dashboard" class="button">Ir a mi Dashboard</a>
+    </p>
+
+    <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+
+    <p>Saludos,<br>El equipo de Uguimar</p>
+
+    <div class="footer">
+        <p>© 2025 Uguimar. Todos los derechos reservados.</p>
+    </div>
+</div>
+</body>
+</html>
