@@ -50,6 +50,8 @@ public class ThymeleafTemplateRepository implements TemplateRepository {
         return switch (type) {
             case VERIFICATION_CODE -> "verification-email";
             case WELCOME -> "welcome-email";
+            case PASSWORD_RESET -> "password-reset-email";
+            case PASSWORD_RESET_CONFIRMATION -> "password-reset-confirmation-email";
         };
     }
 }
