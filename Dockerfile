@@ -1,37 +1,39 @@
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /workspace/app
 
-# Copiar archivos del proyecto
-COPY pom.xml .
-COPY .mvn .mvn
+# Optimizar caché de capas copiando primero solo los archivos necesarios para resolver dependencias
 COPY mvnw .
-COPY src ./src
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Asegurar que los ejecutables tengan permisos correctos
-RUN chmod +x mvnw
+# Descargar dependencias para aprovechar la caché
+RUN chmod +x ./mvnw && ./mvnw dependency:go-offline -B
 
-# Compilar el proyecto
-RUN mvn clean package -DskipTests
+# Ahora copiar el código fuente y compilar
+COPY src src
+RUN ./mvnw package -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM eclipse-temurin:17-jre-alpine
 VOLUME /tmp
+ARG DEPENDENCY=/workspace/app/target/dependency
 
 # Instalar curl para healthcheck
 RUN apk add --no-cache curl
 
-COPY --from=build /workspace/app/target/*.jar app.jar
+COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
+COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 # Crear usuario no-root
 RUN addgroup --system --gid 1001 appgroup && \
     adduser --system --uid 1001 --ingroup appgroup appuser && \
-    chown appuser:appgroup /app.jar
+    chown -R appuser:appgroup /app
 USER appuser
 
-# Exponer puertos HTTP y gRPC
-EXPOSE 8082 9091
+EXPOSE 8082
 
-# Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8081/actuator/health || exit 1
+    CMD curl -f http://localhost:8082/actuator/health || exit 1
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-cp","app:app/lib/*","com.uguimar.notificationsms.NotificationsMsApplication"]
