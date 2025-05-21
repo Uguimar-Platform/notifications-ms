@@ -32,6 +32,23 @@ public class NotificationValidator {
         validateUsername(username);
     }
 
+    /**
+     * Valida datos para correo de restablecimiento de contraseña
+     */
+    public void validatePasswordResetData(String email, String username, String resetCode) {
+        validateEmail(email);
+        validateUsername(username);
+        validateCode(resetCode);
+    }
+
+    /**
+     * Valida datos para correo de confirmación de restablecimiento de contraseña
+     */
+    public void validatePasswordResetConfirmationData(String email, String username) {
+        validateEmail(email);
+        validateUsername(username);
+    }
+
     private void validateEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new InvalidNotificationDataException("El email no puede estar vacío");
